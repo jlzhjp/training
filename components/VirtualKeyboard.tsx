@@ -56,9 +56,6 @@ interface VirtualKeyProps {
 
 export function VirtualKey(props: VirtualKeyProps) {
   const { updateText, getCurrentText } = useContext(VirtualKeyboardContext)
-  const onClickHandler = () => {
-    updateText(props.textProcess(getCurrentText()))
-  }
 
   const virtualKey = useCss({
     margin: "1px",
@@ -80,7 +77,10 @@ export function VirtualKey(props: VirtualKeyProps) {
   })
 
   return (
-    <button className={virtualKey} onClick={onClickHandler}>
+    <button
+      className={virtualKey}
+      onClick={() => updateText(props.textProcess(getCurrentText()))}
+    >
       {props.displayContent}
     </button>
   )

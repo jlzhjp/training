@@ -1,6 +1,6 @@
-import React, { useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import { useCss } from "react-use"
-import { QAForm } from "../components/QAForm"
+import AnswerInput from "../components/AnswerInput"
 import {
   VirtualKey,
   VirtualKeyboard,
@@ -9,8 +9,36 @@ import {
 import { contentCenter } from "../styles"
 
 export function BinHexConversion() {
-  const appendText = (x: string) => (currentText: string) => currentText + x
+  const [question, setQuestion] = useState<string>("")
   const [answerText, setAnswerText] = useState<string>("")
+
+  const correctAnswer = useMemo(() => {
+    const dec = parseInt(question, 16)
+    return dec.toString(2)
+  }, [question])
+
+  const isAnswerCorrect = useMemo(
+    () => answerText.trim().replace(/^0+/, "") === correctAnswer,
+    [answerText, correctAnswer]
+  )
+
+  const appendText = (x: string) => (currentText: string) => currentText + x
+
+  const nextQuestion = () => {
+    const hex = Math.floor(Math.random() * 16)
+    setQuestion(hex.toString(16).toUpperCase())
+    setAnswerText("")
+  }
+
+  useEffect(() => nextQuestion(), [])
+
+  useEffect(() => {
+    if (isAnswerCorrect) {
+      const timeoutId = setTimeout(() => nextQuestion(), 1000)
+      return () => clearTimeout(timeoutId)
+    }
+  }, [isAnswerCorrect])
+
   const splitContainer = useCss({
     display: "flex",
     flexDirection: "column",
@@ -23,11 +51,19 @@ export function BinHexConversion() {
     flexDirection: "column",
     alignItems: "stretch",
     justifyContent: "center",
+    padding: "3rem",
   })
 
   const keyboardView = useCss({
-    backgroundColor: "#c8c8c8",
+    backgroundColor: "#ececec",
     ...contentCenter,
+  })
+
+  const questionDisplay = useCss({
+    fontSize: "2rem",
+    fontWeight: "medium",
+    textAlign: "center",
+    margin: "0.5rem",
   })
 
   const keys = [
@@ -38,9 +74,13 @@ export function BinHexConversion() {
   ]
 
   const virtualKeys = keys.map((row) => (
-    <VirtualKeyboardRow>
+    <VirtualKeyboardRow key={row.reduce((p, c) => p + c)}>
       {row.map((key) => (
-        <VirtualKey displayContent={key} textProcess={appendText(key)} />
+        <VirtualKey
+          key={key}
+          displayContent={key}
+          textProcess={appendText(key)}
+        />
       ))}
     </VirtualKeyboardRow>
   ))
@@ -48,18 +88,27 @@ export function BinHexConversion() {
   return (
     <div className={splitContainer}>
       <div className={qaView}>
-        <QAForm
-          question="测试"
-          answer={answerText}
-          onAnswerUpdate={(newText) => setAnswerText(newText)}
+        <div className={questionDisplay}>{question}</div>
+        <AnswerInput
+          answerText={answerText}
+          isAnswerCorrect={isAnswerCorrect}
+          onAnswerUpdate={(newAnswer) => setAnswerText(newAnswer)}
         />
       </div>
+
       <div className={keyboardView}>
         <VirtualKeyboard
           getCurrentText={() => answerText}
           onTextUpdate={(newText) => setAnswerText(newText)}
         >
           {virtualKeys}
+          <VirtualKeyboardRow>
+            <VirtualKey
+              displayContent="BS"
+              textProcess={(currentText) => currentText.slice(0, -1)}
+            />
+            <VirtualKey displayContent="CLS" textProcess={(_) => ""} />
+          </VirtualKeyboardRow>
         </VirtualKeyboard>
       </div>
     </div>
