@@ -17,8 +17,19 @@ export function BinHexConversion() {
     return dec.toString(2)
   }, [question])
 
+  const parseAnswer = (rawAnswer: string) => {
+    if (rawAnswer == "") {
+      return rawAnswer
+    }
+    const parsedAnswer = rawAnswer.trim().replace(/^0+/, "")
+    if (parsedAnswer === "") {
+      return "0"
+    }
+    return parsedAnswer
+  }
+
   const isAnswerCorrect = useMemo(
-    () => answerText.trim().replace(/^0+/, "") === correctAnswer,
+    () => parseAnswer(answerText) === correctAnswer,
     [answerText, correctAnswer]
   )
 

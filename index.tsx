@@ -3,4 +3,8 @@ import { createRoot } from "react-dom/client"
 import { BinHexConversion } from "./routes/BinHexConversion"
 
 const root = createRoot(document.querySelector("#root"))
-root.render(<BinHexConversion/>)
+root.render((
+  <React.StrictMode>
+    <BinHexConversion />
+  </React.StrictMode>
+))
