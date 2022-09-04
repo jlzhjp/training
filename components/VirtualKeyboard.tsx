@@ -59,18 +59,15 @@ export function VirtualKey(props: VirtualKeyProps) {
 
   const virtualKey = useCss({
     margin: "1px",
-    height: "5rem",
-    width: "5rem",
+    height: "4rem",
+    width: "4rem",
     border: "0",
     borderRadius: "3px",
-    fontSize: "2rem",
+    fontSize: "1rem",
     backgroundColor: "#295dc5",
     color: "#FFFFFF",
     transition: "background-color 0.2s",
     boxShadow: "0 1px 2px gray",
-    "&:hover": {
-      backgroundColor: "#2551a8",
-    },
     "&:active": {
       backgroundColor: "#0e2960",
     },

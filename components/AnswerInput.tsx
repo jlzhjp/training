@@ -10,20 +10,20 @@ interface AnswerInputProps {
 export default function AnswerInput(props: AnswerInputProps) {
   const inputStyle = useCss({
     display: "block",
-    fontSize: "2rem",
+    fontSize: "1rem",
     border: `3px solid ${props.isAnswerCorrect ? "green" : "red"}`,
     borderRadius: "10px",
-    padding: "1rem"
+    padding: "0.5rem",
   })
 
   return (
     <input
       className={inputStyle}
-      type={"text"}
+      type="text"
       value={props.answerText ?? ""}
       onChange={(event) => {
         props.onAnswerUpdate(event.target.value)
       }}
-    ></input>
+    />
   )
 }

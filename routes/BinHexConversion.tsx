@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react"
-import { useCss } from "react-use"
+import { useCss, useToggle } from "react-use"
 import AnswerInput from "../components/AnswerInput"
+import Flyout from "../components/Flyout"
 import {
   VirtualKey,
   VirtualKeyboard,
@@ -50,22 +51,24 @@ export function BinHexConversion() {
     }
   }, [isAnswerCorrect])
 
+  const [isFlyoutShow, toggleFlyout] = useToggle(false)
+
   const splitContainer = useCss({
     display: "flex",
     flexDirection: "column",
-    height: "100vh",
+    height: "100%",
   })
 
   const qaView = useCss({
-    flexGrow: "1",
     display: "flex",
     flexDirection: "column",
     alignItems: "stretch",
     justifyContent: "center",
-    padding: "3rem",
+    padding: "2rem",
   })
 
   const keyboardView = useCss({
+    flexGrow: "1",
     backgroundColor: "#ececec",
     ...contentCenter,
   })
@@ -97,31 +100,37 @@ export function BinHexConversion() {
   ))
 
   return (
-    <div className={splitContainer}>
-      <div className={qaView}>
-        <div className={questionDisplay}>{question}</div>
-        <AnswerInput
-          answerText={answerText}
-          isAnswerCorrect={isAnswerCorrect}
-          onAnswerUpdate={(newAnswer) => setAnswerText(newAnswer)}
-        />
-      </div>
+    <>
+      <button onClick={toggleFlyout}>Toggle</button>
+      <Flyout show={isFlyoutShow} onScrimClick={toggleFlyout}>
+        <div>Hello</div>
+      </Flyout>
+      <div className={splitContainer}>
+        <div className={qaView}>
+          <div className={questionDisplay}>{question}</div>
+          <AnswerInput
+            answerText={answerText}
+            isAnswerCorrect={isAnswerCorrect}
+            onAnswerUpdate={(newAnswer) => setAnswerText(newAnswer)}
+          />
+        </div>
 
-      <div className={keyboardView}>
-        <VirtualKeyboard
-          getCurrentText={() => answerText}
-          onTextUpdate={(newText) => setAnswerText(newText)}
-        >
-          {virtualKeys}
-          <VirtualKeyboardRow>
-            <VirtualKey
-              displayContent="BS"
-              textProcess={(currentText) => currentText.slice(0, -1)}
-            />
-            <VirtualKey displayContent="CLS" textProcess={(_) => ""} />
-          </VirtualKeyboardRow>
-        </VirtualKeyboard>
+        <div className={keyboardView}>
+          <VirtualKeyboard
+            getCurrentText={() => answerText}
+            onTextUpdate={(newText) => setAnswerText(newText)}
+          >
+            {virtualKeys}
+            <VirtualKeyboardRow>
+              <VirtualKey
+                displayContent="BS"
+                textProcess={(currentText) => currentText.slice(0, -1)}
+              />
+              <VirtualKey displayContent="CLS" textProcess={(_) => ""} />
+            </VirtualKeyboardRow>
+          </VirtualKeyboard>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
